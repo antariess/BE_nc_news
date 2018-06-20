@@ -1,3 +1,4 @@
+process.env.NODE_ENV = 'test'
 const seedDB = require('./seed')
 const mongoose = require('mongoose')
 const rawData = require('./testData')

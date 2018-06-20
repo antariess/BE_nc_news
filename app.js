@@ -2,13 +2,19 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
 // const routes....
+const apiRouter = require('./routes/apiRouter')
 
-//all seed stuffs
-//start mongo connection
+const mongoose = require('mongoose')
+const {DB_URL} = require('./config')
+
+mongoose.connect(DB_URL)
+.then(() => {
+    console.log(`connected to ${DB_URL}`)
+})
 
 app.use(bodyParser.JSON())
 
-
+app.use('/api', apiRouter)
 
 
 app.use("/*", (req, res, next) => {
