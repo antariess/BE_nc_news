@@ -6,12 +6,14 @@ const seedDB = require("../seed/seed");
 const testData = require("../seed/testData");
 const mongoose = require("mongoose");
 
-describe("NC NEWS", () => {
+let topicDocs;
+let articleDocs;
+let userDocs;
+let commentsDocs;
+
+describe("NC NEWS", function() {
   //seeding the DB before each test, and dropping it. Setting up access to the params in docs
-  let topicDocs;
-  let articleDocs;
-  let userDocs;
-  let commentsDocs;
+  this.timeout(5000);
   beforeEach(() => {
     return seedDB(testData).then(docs => {
       [commentsDocs, userDocs, articleDocs, topicDocs] = docs;
@@ -43,7 +45,11 @@ describe("NC NEWS", () => {
         .then(res => {
           const articles = res.body.articles;
           expect(articles.length).to.equal(2);
-          expect(articles[0]).to.include.keys("created_by", "comments", "votes");
+          expect(articles[0]).to.include.keys(
+            "created_by",
+            "comments",
+            "votes"
+          );
           expect(articles[0].belongs_to).to.equal(`${topicDocs[0].slug}`);
         });
     });
@@ -52,12 +58,41 @@ describe("NC NEWS", () => {
     it("POST add a new article to a topic", () => {
       return request
         .post(`/api/topics/${topicDocs[0].slug}/articles`)
-        .send({title: "My very first blog post", created_by: userDocs[0]._id, body: "ehmegerd post"})
+        .send({
+          title: "My very first blog post",
+          created_by: userDocs[0]._id,
+          body: "ehmegerd post"
+        })
         .expect(201)
         .then(res => {
           const article = res.body.newArticle;
           expect(article).to.include.keys("created_by", "belongs_to");
           expect(article.belongs_to).to.equal(`${topicDocs[0].slug}`);
+        });
+    });
+  });
+  //articles
+  describe("/articles", () => {
+    it("GET all articles", () => {
+      return request
+        .get("/api/articles")
+        .expect(200)
+        .then(res => {
+          const articles = res.body.articles;
+          expect(articles.length).to.equal(4);
+          expect(articles[0]).to.include.keys("created_by", "comments", "body");
+        });
+    });
+  });
+  describe("/articles/:article_id", () => {
+    it("GET article by ID", () => {
+      return request
+        .get(`/api/articles/${articleDocs[0]._id}`)
+        .expect(200)
+        .then(res => {
+          const article = res.body.article;
+          expect(article._id).to.equal(`${articleDocs[0]._id}`);
+          expect(article).to.include.keys("created_by", "comments", "body");
         });
     });
   });

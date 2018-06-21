@@ -43,7 +43,6 @@ const addArticleByTopic = (req, res, next) => {
     newArticle.belongs_to = req.params.topic_slug
     newArticle.save()
     .then((newArticle) => {
-        console.log(newArticle)
         res.status(201).send({newArticle})
     })
     .catch(next)
