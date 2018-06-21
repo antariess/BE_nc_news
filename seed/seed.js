@@ -14,16 +14,19 @@ const seedDB = ({userData, topicData, articleData, commentData}) => {
         const userLookup = createUserLookup(articleData, userDocs)
         return Promise.all([
             userDocs,
-            Article.insertMany(formatArticleData(articleData, userLookup))
+            Article.insertMany(formatArticleData(articleData, userLookup)),
+            topicDocs
         ])
     })
-    .then(([userDocs, articleDocs]) => {
+    .then(([userDocs, articleDocs, topicDocs]) => {
         const userLookup = createUserLookup(commentData, userDocs)
         const articleLookup = createArticleLookup(commentData, articleDocs)
-        return Comment.insertMany(formatCommentData(commentData, userLookup, articleLookup))
-    })
-    .then((commentDocs) => {
-        console.log(commentDocs)
+        return Promise.all([
+            Comment.insertMany(formatCommentData(commentData, userLookup, articleLookup)),
+            userDocs,
+            articleDocs,
+            topicDocs
+        ])
     })
     .catch(console.log)
 }

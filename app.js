@@ -5,14 +5,15 @@ const app = express()
 const apiRouter = require('./routes/apiRouter')
 
 const mongoose = require('mongoose')
-const {DB_URL} = require('./config')
+const {DB_URL} = require('./config/config')
 
 mongoose.connect(DB_URL)
 .then(() => {
     console.log(`connected to ${DB_URL}`)
 })
+.catch(console.log)
 
-app.use(bodyParser.JSON())
+app.use(bodyParser.json())
 
 app.use('/api', apiRouter)
 
