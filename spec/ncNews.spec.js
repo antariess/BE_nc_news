@@ -148,4 +148,51 @@ describe("NC NEWS", function() {
         });
     });
   });  
+  //comments
+  describe("/api/comments/:comment_id", () => {
+    it('PUT upvote a comment by ID', () => {
+      return request
+      .put(`/api/comments/${commentsDocs[0]._id}?vote=up`)
+      .expect(200)
+      .then(res => {
+        const {comment} = res.body
+        expect(comment._id).to.equal(`${commentsDocs[0]._id}`)
+        expect(comment.votes).to.equal(commentsDocs[0].votes + 1)
+        expect(comment).to.include.keys("created_by", "belongs_to", "votes")
+      })
+    })
+    it('PUT down a comment by ID', () => {
+      return request
+      .put(`/api/comments/${commentsDocs[0]._id}?vote=down`)
+      .expect(200)
+      .then(res => {
+        const {comment} = res.body
+        expect(comment._id).to.equal(`${commentsDocs[0]._id}`)
+        expect(comment.votes).to.equal(commentsDocs[0].votes - 1)
+        expect(comment).to.include.keys("created_by", "belongs_to", "votes")
+      })
+    })
+    it('DELETE a comment by ID', () => {
+      return request
+      .delete(`/api/comments/${commentsDocs[0]._id}`)
+      .expect(204)
+      .then(res => {
+        expect(res.body).to.be.empty
+      })
+    })
+  })
+  //users
+  describe("/api/users/:username", () => {
+    it("GET a use by username", () => {
+      return request 
+      .get(`/api/users/${userDocs[0].username}`)
+      .expect(200)
+      .then(res => {
+        const {user} = res.body
+        expect(user).to.include.keys("username", "name", "avatar_url")
+        expect(user.usename).to.equal(userDocs[0].usename)
+      })
+    })
+  })
 });
+ 
