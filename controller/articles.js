@@ -56,8 +56,25 @@ const articleUpDownVote = () => {
 
 };
 
-const getCommentsByArticle = () => {
-
+const getCommentsByArticle = (req, res, next) => {
+  const {article_id} = req.params
+  console.log(article_id)
+  Comment.find()
+  .where("belongs_to")
+  .equals(article_id)
+  .populate("created_by")
+  .lean()
+  .then((commentDocs) => {
+    const comments = commentDocs.map(commentDoc => {
+      const created_by = commentDoc.created_by
+      return {
+        ...commentDoc,
+        created_by: created_by.username
+      }
+    })
+    res.send({comments})
+  })
+  .catch(next)
 };
 
 const addCommentByArticle = () => {

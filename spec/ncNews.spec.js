@@ -96,4 +96,18 @@ describe("NC NEWS", function() {
         });
     });
   });
+  describe("/api/articles/:article_id/comments", () => {
+    it("GET article by ID", () => {
+      return request
+        .get(`/api/articles/${articleDocs[0]._id}/comments`)
+        .expect(200)
+        .then(res => {
+          const comments = res.body.comments;
+          expect(comments.length).to.equal(2)
+          expect(comments[0].belongs_to).to.equal(`${articleDocs[0]._id}`);
+          expect(comments[0]).to.include.keys("created_by", "belongs_to", "votes", "created_at", "body");
+        });
+    });
+  });
+  
 });
