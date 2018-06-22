@@ -95,6 +95,17 @@ describe("NC NEWS", function() {
           expect(article).to.include.keys("created_by", "comments", "body");
         });
     });
+    it("PUT update vote count", () => {
+      return request
+        .put(`/api/articles/${articleDocs[0]._id}?vote=up`)
+        .expect(200)
+        .then(res => {
+          const {updated} = res.body;
+          expect(updated._id).to.equal(`${articleDocs[0]._id}`);
+          expect(updated.votes).to.equal(1)
+          expect(updated).to.include.keys("created_by", "votes", "body");
+        });
+    });
   });
   describe("/api/articles/:article_id/comments", () => {
     it("GET article by ID", () => {
@@ -109,5 +120,21 @@ describe("NC NEWS", function() {
         });
     });
   });
-  
+  describe("/api/articles/:article_id/comments", () => {
+    it("POST adds an article", () => {
+      return request
+        .post(`/api/articles/${articleDocs[0]._id}/comments`)
+        .expect(201)
+        .send({
+          body: "commenting on stuffs", 
+          belongs_to: articleDocs[0]._id, 
+          created_by: userDocs[0]._id
+        })
+        .then(res => {
+          const {comment} = res.body;
+          expect(comment.belongs_to).to.equal(`${articleDocs[0]._id}`);
+          expect(comment).to.include.keys("created_by", "belongs_to", "votes", "created_at", "body");
+        });
+    });
+  });  
 });

@@ -10,14 +10,12 @@ const {
 articlesRouter.route("/")
   .get(getAllArticles);
 
-articlesRouter
-  .route("/:article_id")
+articlesRouter.route("/:article_id")
   .get(getArticleByID)
   .put(articleUpDownVote);
 
-articlesRouter
-  .route("/:article_id/comments")
+articlesRouter.route("/:article_id/comments")
   .get(getCommentsByArticle)
-  .post(addCommentByArticle);
+  .post(addCommentByArticle)
 
 module.exports = articlesRouter;

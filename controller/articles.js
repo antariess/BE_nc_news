@@ -52,13 +52,20 @@ const getArticleByID = (req, res, next) => {
   .catch(next)
 };
 
-const articleUpDownVote = () => {
-
+const articleUpDownVote = (req, res, next) => {
+  const {article_id} = req.params
+  let countUpOrDown = req.query.vote
+  if (countUpOrDown === 'up'){
+    Article.findByIdAndUpdate(article_id, {$inc: {votes:1}}, {new: true})
+    .then(updated => {
+      res.status(200).send({updated})
+    })
+    .catch(next)
+  }
 };
 
 const getCommentsByArticle = (req, res, next) => {
   const {article_id} = req.params
-  console.log(article_id)
   Comment.find()
   .where("belongs_to")
   .equals(article_id)
@@ -77,8 +84,13 @@ const getCommentsByArticle = (req, res, next) => {
   .catch(next)
 };
 
-const addCommentByArticle = () => {
-
+const addCommentByArticle = (req, res, next) => {
+  const newComment = new Comment(req.body)
+  newComment.save()
+  .then((comment) => {
+    res.status(201).send({comment})
+  })
+  .catch(next)
 };
 
 
