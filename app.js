@@ -1,31 +1,35 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const app = express()
+const express = require("express");
+const bodyParser = require("body-parser");
+const app = express();
 // const routes....
-const apiRouter = require('./routes/apiRouter')
+const apiRouter = require("./routes/apiRouter");
+const { handle400, handle404 } = require("./errors");
 
-const mongoose = require('mongoose')
-const {DB_URL} = require('./config/config')
+const mongoose = require("mongoose");
+const { DB_URL } = require("./config/config");
 
-mongoose.connect(DB_URL)
-.then(() => {
-    console.log(`connected to ${DB_URL}`)
-})
-.catch(console.log)
+mongoose
+  .connect(DB_URL)
+  .then(() => {
+    console.log(`connected to ${DB_URL}`);
+  })
+  .catch(console.log);
 
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
-app.use('/api', apiRouter)
+app.use("/api", apiRouter);
 
+//error handling
+app.get("/*", (req, res, next) => {
+  next({ status: 404, message: "page not found" });
+});
 
-app.use("/*", (req, res, next) => {
-    res.send({status: 404, message: 'page not found'})
-})
+app.use(handle404);
+
+app.use(handle400);
 
 app.use((err, req, res, next) => {
-    if (err.status) res.send({status: err.status, message: err.message})
-    else res.send({status: 500, message: 'Internal server error'})
-})
+  res.status(500).send({ message: "Internal server error" });
+});
 
-
-module.exports = app
+module.exports = app;
