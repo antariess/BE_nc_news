@@ -95,15 +95,26 @@ describe("NC NEWS", function() {
           expect(article).to.include.keys("created_by", "comments", "body");
         });
     });
-    it("PUT update vote count", () => {
+    it("PUT increment vote count", () => {
       return request
         .put(`/api/articles/${articleDocs[0]._id}?vote=up`)
         .expect(200)
         .then(res => {
-          const {updated} = res.body;
-          expect(updated._id).to.equal(`${articleDocs[0]._id}`);
-          expect(updated.votes).to.equal(1)
-          expect(updated).to.include.keys("created_by", "votes", "body");
+          const {article} = res.body;
+          expect(article._id).to.equal(`${articleDocs[0]._id}`);
+          expect(article.votes).to.equal(1)
+          expect(article).to.include.keys("created_by", "votes", "body");
+        });
+    });
+    it("PUT decrement vote count", () => {
+      return request
+        .put(`/api/articles/${articleDocs[0]._id}?vote=down`)
+        .expect(200)
+        .then(res => {
+          const {article} = res.body;
+          expect(article._id).to.equal(`${articleDocs[0]._id}`);
+          expect(article.votes).to.equal(-1)
+          expect(article).to.include.keys("created_by", "votes", "body");
         });
     });
   });

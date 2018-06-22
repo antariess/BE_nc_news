@@ -57,10 +57,25 @@ const articleUpDownVote = (req, res, next) => {
   let countUpOrDown = req.query.vote
   if (countUpOrDown === 'up'){
     Article.findByIdAndUpdate(article_id, {$inc: {votes:1}}, {new: true})
+    .populate("created_by")
+    .lean()
     .then(updated => {
-      res.status(200).send({updated})
+      const username = updated.created_by
+      const article = {...updated, created_by: username}
+      res.status(200).send({article})
     })
     .catch(next)
+  } else if(countUpOrDown === 'down'){
+    Article.findByIdAndUpdate(article_id, {$inc: {votes:-1}}, {new: true})
+    .populate("created_by")
+    .lean()
+    .then(updated => {
+      const username = updated.created_by
+      const article = {...updated, created_by: username}
+      res.status(200).send({article})
+    })
+  } else {
+    next({status: 404, message: 'random message'})
   }
 };
 
