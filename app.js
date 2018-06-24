@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
-// const routes....
+
 const apiRouter = require("./routes/apiRouter");
 const { handle400, handle404 } = require("./errors");
 

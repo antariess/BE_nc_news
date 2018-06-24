@@ -5,7 +5,7 @@ const commentsRouter = require("./commentsRouter");
 const usersRouter = require("./usersRouter");
 
 apiRouter.route("/").get((req, res, next) => {
-  res.send({ message: "connected to main page" });
+  res.render('index');
 });
 
 apiRouter.use("/topics", topicsRouter);
