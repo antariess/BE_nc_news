@@ -6,7 +6,7 @@ const apiRouter = require("./routes/apiRouter");
 const { handle400, handle404 } = require("./errors");
 
 const mongoose = require("mongoose");
-const { DB_URL } = require("./config/config");
+const {DB_URL} = process.env.NODE_ENV === 'production'? process.env : require('./config');
 
 mongoose
   .connect(DB_URL)
