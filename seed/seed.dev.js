@@ -1,6 +1,6 @@
 const seedDB = require('./seed')
 const mongoose = require('mongoose')
-const rawData = require('./testData')
+const rawData = require('./devData')
 const{DB_URL} = require('../config/config')
 
 mongoose.connect(DB_URL)

@@ -6,7 +6,7 @@ const apiRouter = require("./routes/apiRouter");
 const { handle400, handle404 } = require("./errors");
 
 const mongoose = require("mongoose");
-const {DB_URL} = process.env.NODE_ENV === 'production'? process.env : require('./config');
+const {DB_URL} = process.env.NODE_ENV === 'production'? process.env : require('./config/config');
 
 mongoose
   .connect(DB_URL)
@@ -16,6 +16,8 @@ mongoose
   .catch(console.log);
 
 app.use(bodyParser.json());
+
+app.set('view engine', 'ejs');
 
 app.use("/api", apiRouter);
 
@@ -29,6 +31,7 @@ app.use(handle404);
 app.use(handle400);
 
 app.use((err, req, res, next) => {
+  console.log(err)
   res.status(500).send({ message: "Internal server error" });
 });
 

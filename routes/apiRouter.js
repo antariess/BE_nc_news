@@ -4,8 +4,9 @@ const articlesRouter = require("./articlesRouter");
 const commentsRouter = require("./commentsRouter");
 const usersRouter = require("./usersRouter");
 
-apiRouter.route("/").get((req, res, next) => {
-  res.render('index');
+apiRouter.route("/")
+  .get((req, res, next) => {
+    res.render('pages/index')
 });
 
 apiRouter.use("/topics", topicsRouter);

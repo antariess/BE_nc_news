@@ -12,6 +12,7 @@ Dependencies:
 mongoose
 express
 body-parser
+ejs
 
 Dev dependencies:
 mocha
