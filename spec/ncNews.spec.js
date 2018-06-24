@@ -147,6 +147,14 @@ describe("NC NEWS", function() {
           expect(comment).to.include.keys("created_by", "belongs_to", "votes", "created_at", "body");
         });
     });
+    it("GET with incorrect id to return 400", () => {
+      return request
+      .get(`/api/articles/blep123`)
+      .expect(400)
+      .then(res => {
+        expect(res.body.message).to.equal("Bad request: blep123 is not a valid ID")
+      })
+    })
   });  
   //comments
   describe("/api/comments/:comment_id", () => {
@@ -183,7 +191,7 @@ describe("NC NEWS", function() {
   })
   //users
   describe("/api/users/:username", () => {
-    it("GET a use by username", () => {
+    it("GET a user by username", () => {
       return request 
       .get(`/api/users/${userDocs[0].username}`)
       .expect(200)
@@ -191,6 +199,14 @@ describe("NC NEWS", function() {
         const {user} = res.body
         expect(user).to.include.keys("username", "name", "avatar_url")
         expect(user.usename).to.equal(userDocs[0].usename)
+      })
+    })
+    it("GET 404 when user not found ", () => {
+      return request
+      .get(`/api/users/:blep123`)
+      .expect(404)
+      .then(res => {
+        expect(res.body.message).to.equal(`Page not found: the user you are looking for does not exist`)
       })
     })
   })
