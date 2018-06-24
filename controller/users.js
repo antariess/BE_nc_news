@@ -4,7 +4,6 @@ const getUserByID = (req, res, next) => {
   const { username } = req.params;
   User.find({ username: username })
     .then(userDoc => {
-      console.log(userDoc[0])
       if (userDoc.length === 0) {
         next({status: 404, message: `Page not found: the user you are looking for does not exist`})
       }

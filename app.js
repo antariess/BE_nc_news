@@ -21,7 +21,7 @@ app.use("/api", apiRouter);
 
 //error handling
 app.get("/*", (req, res, next) => {
-  next({ status: 404, message: "page not found" });
+  next({ status: 404, message: "Page not found" });
 });
 
 app.use(handle404);

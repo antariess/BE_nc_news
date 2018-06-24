@@ -3,7 +3,11 @@ const {Comment} = require('../models')
 const upOrDownVoteComment = (req, res, next) => {
   const upOrDown = req.query.vote
   const {comment_id} = req.params
-  const increment = (upOrDown === 'up') ? {$inc: {votes: 1}} : {$inc: {votes: -1}} 
+  const increment = (upOrDown === 'up') 
+  ? {$inc: {votes: 1}} 
+  : upOrDown === 'down' 
+  ? {$inc: {votes: -1}} 
+  : next({status: 400, message: `Bad request: can only 'up' or 'down' vote`, name:"ValidationError"})
   Comment.findByIdAndUpdate(comment_id, increment, {new: true})
   .populate("created_by")
   .populate("belongs_to")

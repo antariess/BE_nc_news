@@ -75,7 +75,7 @@ const articleUpDownVote = (req, res, next) => {
       res.status(200).send({article})
     })
   } else {
-    next({status: 404, message: 'random message'})
+    next({status: 400, message: `Bad request: can only 'up' or 'down' vote`, name:"ValidationError"})
   }
 };
 
@@ -105,7 +105,10 @@ const addCommentByArticle = (req, res, next) => {
   .then((comment) => {
     res.status(201).send({comment})
   })
-  .catch(next)
+  .catch(err => {
+    console.log(err.message)
+    next(err)
+  })
 };
 
 

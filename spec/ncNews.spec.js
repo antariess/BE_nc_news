@@ -85,6 +85,7 @@ describe("NC NEWS", function() {
     });
   });
   describe("/articles/:article_id", () => {
+    //get article by ID
     it("GET article by ID", () => {
       return request
         .get(`/api/articles/${articleDocs[0]._id}`)
@@ -95,6 +96,23 @@ describe("NC NEWS", function() {
           expect(article).to.include.keys("created_by", "comments", "body");
         });
     });
+    it("GET with incorrect id to return 400", () => {
+      return request
+      .get(`/api/articles/blep123`)
+      .expect(400)
+      .then(res => {
+        expect(res.body.message).to.equal("Bad request: blep123 is not a valid ID")
+      })
+    })
+    it("GET with correct id format but not existing", () => {
+      return request
+      .get(`/qpi/articles${userDocs[0]._id}`)
+      .expect(404)
+      .then(res => {
+        expect(res.body.message).to.equal(`Page not found`)
+      })
+    })
+    //upvote downvote articles
     it("PUT increment vote count", () => {
       return request
         .put(`/api/articles/${articleDocs[0]._id}?vote=up`)
@@ -117,7 +135,16 @@ describe("NC NEWS", function() {
           expect(article).to.include.keys("created_by", "votes", "body");
         });
     });
+    it('PUT when provided with incorrect query param', () => {
+      return request
+      .put(`/api/comments/${articleDocs[0]._id}?vote=blep123`)
+      .expect(400)
+      .then(res => {
+        expect(res.body.message).to.equal(`Bad request: can only 'up' or 'down' vote`)
+      })
+    })
   });
+  //get all comments byt article id ---> errors already tested above
   describe("/api/articles/:article_id/comments", () => {
     it("GET article by ID", () => {
       return request
@@ -131,6 +158,7 @@ describe("NC NEWS", function() {
         });
     });
   });
+  //add a comment by article
   describe("/api/articles/:article_id/comments", () => {
     it("POST adds an article", () => {
       return request
@@ -147,17 +175,19 @@ describe("NC NEWS", function() {
           expect(comment).to.include.keys("created_by", "belongs_to", "votes", "created_at", "body");
         });
     });
-    it("GET with incorrect id to return 400", () => {
+    it("POST with compulsory fields missing", () => {
       return request
-      .get(`/api/articles/blep123`)
+      .post(`/api/articles/${articleDocs[0]._id}/comments`)
       .expect(400)
+      .send({})
       .then(res => {
-        expect(res.body.message).to.equal("Bad request: blep123 is not a valid ID")
+        expect(res.body.message).to.equal(`Bad request: comments validation failed: created_by: Path \`created_by\` is required., belongs_to: Path \`belongs_to\` is required., body: Path \`body\` is required.`)
       })
-    })
+    })    
   });  
   //comments
   describe("/api/comments/:comment_id", () => {
+    //up and down voting
     it('PUT upvote a comment by ID', () => {
       return request
       .put(`/api/comments/${commentsDocs[0]._id}?vote=up`)
@@ -180,12 +210,29 @@ describe("NC NEWS", function() {
         expect(comment).to.include.keys("created_by", "belongs_to", "votes")
       })
     })
+    it('PUT when provided with incorrect query param', () => {
+      return request
+      .put(`/api/comments/${commentsDocs[0]._id}?vote=blep123`)
+      .expect(400)
+      .then(res => {
+        expect(res.body.message).to.equal(`Bad request: can only 'up' or 'down' vote`)
+      })
+    })
+    //deleting comments
     it('DELETE a comment by ID', () => {
       return request
       .delete(`/api/comments/${commentsDocs[0]._id}`)
       .expect(204)
       .then(res => {
         expect(res.body).to.be.empty
+      })
+    })
+    it("DELETE cannot delete if invalid id", () => {
+      return request
+      .delete(`/api/comments/blep123`)
+      .expect(400)
+      .then(res => {
+        expect(res.body.message).to.equal(`Bad request: blep123 is not a valid ID`)
       })
     })
   })
