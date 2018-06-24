@@ -37,6 +37,7 @@ describe("NC NEWS", function() {
         });
     });
   });
+  //articles by topic id
   describe("/topics/:topic_slug/articles", () => {
     it("GET all articles by topic", () => {
       return request
@@ -53,7 +54,24 @@ describe("NC NEWS", function() {
           expect(articles[0].belongs_to).to.equal(`${topicDocs[0].slug}`);
         });
     });
+    it("GET 404 with not existing topic string", () => {
+      return request
+      .get(`/api/topics/blep123/articles`)
+      .expect(404)
+      .then(res => {
+        expect(res.body.message).to.equal(`Page not found: topic does not exist`)
+      })
+    })
+    it("GET 404 with correct id format but not existing", () => {
+      return request
+      .get(`/api/topics/${userDocs[0]._id}/articles`)
+      .expect(404)
+      .then(res => {
+        expect(res.body.message).to.equal(`Page not found: topic does not exist`)
+      })
+    })
   });
+  //add an article by topic
   describe("/topics/:topic_slug/articles", () => {
     it("POST add a new article to a topic", () => {
       return request
@@ -70,6 +88,15 @@ describe("NC NEWS", function() {
           expect(article.belongs_to).to.equal(`${topicDocs[0].slug}`);
         });
     });
+    it("POST with blank object", () => {
+      return request
+      .post(`/api/topics/${topicDocs[0].slug}/articles`)
+      .send({})
+      .expect(400)
+      .then(res => {
+        expect(res.body.message).to.equal(`Bad request: articles validation failed: created_by: Path \`created_by\` is required., title: Path \`title\` is required.`)
+      })
+    })
   });
   //articles
   describe("/articles", () => {
@@ -104,9 +131,9 @@ describe("NC NEWS", function() {
         expect(res.body.message).to.equal("Bad request: blep123 is not a valid ID")
       })
     })
-    it("GET with correct id format but not existing", () => {
+    it("GET 404 with correct id format but not existing", () => {
       return request
-      .get(`/qpi/articles${userDocs[0]._id}`)
+      .get(`/api/articles${userDocs[0]._id}`)
       .expect(404)
       .then(res => {
         expect(res.body.message).to.equal(`Page not found`)

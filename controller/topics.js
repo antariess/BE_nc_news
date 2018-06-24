@@ -16,11 +16,14 @@ const getAllArticlesByTopic = (req, res, next) => {
     .populate("created_by")
     .lean()
     .then(articles => {
-      const counts = articles.map(article => {
-        return Comment.count({ belongs_to: article._id });
-      });
-      counts.push(articles);
-      return Promise.all(counts);
+      if (articles.length === 0) next({status: 404, message: `Page not found: topic does not exist`})
+      else {
+        const counts = articles.map(article => {
+          return Comment.count({ belongs_to: article._id });
+        });
+        counts.push(articles);
+        return Promise.all(counts);
+      }
     })
     .then(counts => {
       const rawArticles = counts.pop();
