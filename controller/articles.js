@@ -55,8 +55,13 @@ const getArticleByID = (req, res, next) => {
 const articleUpDownVote = (req, res, next) => {
   const {article_id} = req.params
   let countUpOrDown = req.query.vote
-  if (countUpOrDown === 'up'){
-    Article.findByIdAndUpdate(article_id, {$inc: {votes:1}}, {new: true})
+    const increment = (countUpOrDown === 'up') 
+      ? {$inc: {votes: 1}} 
+      : countUpOrDown === 'down' 
+      ? {$inc: {votes: -1}}
+      : null
+    if (increment === null) throw next({status: 400, message: `Bad request: can only 'up' or 'down' vote`, name:"ValidationError"})
+    Article.findByIdAndUpdate(article_id, increment, {new: true})
     .populate("created_by")
     .lean()
     .then(updated => {
@@ -65,18 +70,7 @@ const articleUpDownVote = (req, res, next) => {
       res.status(200).send({article})
     })
     .catch(next)
-  } else if(countUpOrDown === 'down'){
-    Article.findByIdAndUpdate(article_id, {$inc: {votes:-1}}, {new: true})
-    .populate("created_by")
-    .lean()
-    .then(updated => {
-      const username = updated.created_by
-      const article = {...updated, created_by: username}
-      res.status(200).send({article})
-    })
-  } else {
-    next({status: 400, message: `Bad request: can only 'up' or 'down' vote`, name:"ValidationError"})
-  }
+    
 };
 
 const getCommentsByArticle = (req, res, next) => {
@@ -106,7 +100,6 @@ const addCommentByArticle = (req, res, next) => {
     res.status(201).send({comment})
   })
   .catch(err => {
-    console.log(err.message)
     next(err)
   })
 };

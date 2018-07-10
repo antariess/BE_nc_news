@@ -16,7 +16,7 @@ const getAllArticlesByTopic = (req, res, next) => {
     .populate("created_by")
     .lean()
     .then(articles => {
-      if (articles.length === 0) next({status: 404, message: `Page not found: topic does not exist`})
+      if (articles.length === 0) throw next({status: 404, message: `Page not found: topic does not exist`})
       else {
         const counts = articles.map(article => {
           return Comment.count({ belongs_to: article._id });

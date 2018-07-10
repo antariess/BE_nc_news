@@ -5,19 +5,22 @@ This is a repo for the final block 3 project for Northcoders!
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 ### Prerequisites
+html5
 Node environment
 mongo 
+mongoose
 
 Dependencies:
-mongoose
-express
-body-parser
-ejs
+mongoose ^5.1.6
+express ^4.16.3
+body-parser ^1.18.3
+ejs ^2.6.1
 
 Dev dependencies:
-mocha
-chai
-supertest
+mocha ^5.2.0
+chai ^4.1.2
+nodemon ^1.17.4
+supertest ^3.1.0
 
 All packages can be installed using: npm install <name of package>; dev dependencies can be installed with npm install -D <name of package>
 
