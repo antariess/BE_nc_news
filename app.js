@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
+const cors = require('cors')
 
 const apiRouter = require("./routes/apiRouter");
 const { handle400, handle404 } = require("./errors");
@@ -16,6 +17,8 @@ mongoose
   .catch(console.log);
 
 app.use(bodyParser.json());
+
+app.use(cors())
 
 app.set('view engine', 'ejs');
 
